@@ -24,7 +24,6 @@ jobs:
         run: pnpm install && pnpm install-all
 
       - name: build demo
-        working-directory: demo
         run: pnpm run demo
 
       - name: push to gh-pages branch
