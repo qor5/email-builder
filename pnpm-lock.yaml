@@ -28,7 +28,7 @@ importers:
         version: 4.0.0(encoding@0.1.13)
       liquidjs:
         specifier: ^10.0.0
-        version: 10.0.0
+        version: 10.19.1
       posthog-js:
         specifier: ^1.76.0
         version: 1.76.0
@@ -906,6 +906,10 @@ packages:
     resolution: {integrity: sha512-FQN4MRfuJeHf7cBbBMJFXhKSDq+2kAArBlmRBvcvFE5BB1HZKXtSFASDhdlz9zOYwxh8lDdnvmMOe/+5cdoEdg==}
     engines: {node: '>= 0.8'}
 
+  commander@10.0.1:
+    resolution: {integrity: sha512-y4Mg2tXshplEbSGzx7amzPwKKOCGuoSRP/CjEdwwk0FOGlUbq6lKuoyDZTNZkmxHdJtp54hdfY/JUrdL7Xfdug==}
+    engines: {node: '>=14'}
+
   compare-func@2.0.0:
     resolution: {integrity: sha512-zHig5N+tPWARooBnb0Zx1MFcdfpyJrfTJ3Y5L+IFvUm8rM74hHz66z0gw0x4tijh5CorKkKUCnW82R2vmpeCRA==}
 
@@ -1768,8 +1772,8 @@ packages:
   lines-and-columns@1.2.4:
     resolution: {integrity: sha512-7ylylesZQ/PV29jhEDl3Ufjo6ZX7gCqJr5F7PKrqc93v7fzSymt1BpwEU8nAUXs8qzzvqhbjhK5QZg6Mt/HkBg==}
 
-  liquidjs@10.0.0:
-    resolution: {integrity: sha512-uY3fKqBSRmnat0wB5qWk0W5N5iT78OUhuIXNRiMfhYQ3p35al9mEWKQ68/Z+WD54V2upaxEM8nHaZ6o1B8WCMA==}
+  liquidjs@10.19.1:
+    resolution: {integrity: sha512-3xb+LAWB8/btUJIuqO52zTxoYovaCS5foaLjBaa/ntRh4yss4NxhZzMcJRYkcQDFGNGWbhcXzZlN7m+hSYIxcw==}
     engines: {node: '>=14'}
     hasBin: true
 
@@ -4075,6 +4079,8 @@ snapshots:
     dependencies:
       delayed-stream: 1.0.0
 
+  commander@10.0.1: {}
+
   compare-func@2.0.0:
     dependencies:
       array-ify: 1.0.0
@@ -5109,7 +5115,9 @@ snapshots:
 
   lines-and-columns@1.2.4: {}
 
-  liquidjs@10.0.0: {}
+  liquidjs@10.19.1:
+    dependencies:
+      commander: 10.0.1
 
   load-json-file@4.0.0:
     dependencies:
