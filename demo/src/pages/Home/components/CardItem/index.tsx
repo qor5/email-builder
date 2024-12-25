@@ -34,24 +34,24 @@ export function CardItem(props: CardItemProps) {
         success() {
           dispatch(templateList.actions.fetch(undefined));
         },
-      })
+      }),
     );
   }, [data, dispatch]);
 
   const onDuplicate: React.MouseEventHandler<HTMLAnchorElement> = useCallback(
-    (ev) => {
+    ev => {
       ev.preventDefault();
       dispatch(
         template.actions.duplicate({
           article: data,
           _actionKey: data.article_id,
           success(id) {
-            history.push(`/editor?id=${id}`);
+            history.push(`editor?id=${id}`);
           },
-        })
+        }),
       );
     },
-    [data, dispatch, history]
+    [data, dispatch, history],
   );
 
   return (
@@ -69,7 +69,10 @@ export function CardItem(props: CardItemProps) {
       <div className={styles.mask}>
         {loading ? (
           <div className={styles.listBottom}>
-            <Loading loading color='#ffffff' />
+            <Loading
+              loading
+              color='#ffffff'
+            />
           </div>
         ) : (
           <div className={styles.listBottom}>
@@ -99,7 +102,10 @@ export function CardItem(props: CardItemProps) {
               </Link>
             </div>
             <div className={styles.listItem}>
-              <Link to='javascript:void(0)' onClick={onDuplicate}>
+              <Link
+                to='javascript:void(0)'
+                onClick={onDuplicate}
+              >
                 Duplicate
               </Link>
             </div>
