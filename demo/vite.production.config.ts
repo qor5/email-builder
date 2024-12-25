@@ -4,7 +4,6 @@ import path from 'path';
 import { injectHtml } from 'vite-plugin-html';
 
 export default defineConfig({
-  base: '/email-builder/',
   resolve: {
     alias: {
       '@demo': path.resolve(__dirname, './src'),

@@ -4,6 +4,7 @@ import path from 'path';
 import { injectHtml } from 'vite-plugin-html';
 
 export default defineConfig({
+  base: '/email-builder/',
   server: {
     fs: {
       strict: false,
