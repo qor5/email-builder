@@ -21,7 +21,7 @@ jobs:
         run: npm install -g pnpm
 
       - name: Install dep
-        run: pnpm install && pnpm install-all
+        run: pnpm i && pnpm run install-all
 
       - name: build demo
         run: pnpm run build && pnpm run demo
