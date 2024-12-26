@@ -34,8 +34,11 @@ export default function Home() {
     >
       <>
         <Stack>
-          {[...templates, ...list].map((item) => (
-            <CardItem data={item} key={item.article_id} />
+          {[...list, ...templates].map(item => (
+            <CardItem
+              data={item}
+              key={item.article_id}
+            />
           ))}
         </Stack>
       </>

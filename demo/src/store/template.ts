@@ -8,6 +8,14 @@ import { IEmailTemplate } from 'easy-email-editor';
 import { getTemplate } from '@demo/config/getTemplate';
 
 export function getAdaptor(data: IArticle): IEmailTemplate {
+  const content = JSON.parse(data.data[0].json_body) as IBlockData;
+
+  return {
+    ...content,
+  };
+}
+
+export function getAdaptorForTemplate(data: IArticle): IEmailTemplate {
   const content = JSON.parse(data.content.content) as IBlockData;
   return {
     ...data,
@@ -38,9 +46,12 @@ export default createSliceState({
     ) => {
       try {
         let data = await getTemplate(id);
-        if (!data) {
-          data = await article.getArticle(id, userId);
+
+        if (data) {
+          return getAdaptorForTemplate(data);
         }
+        data = await article.getArticle(id, userId);
+
         return getAdaptor(data);
       } catch (error) {
         history.replace('/');

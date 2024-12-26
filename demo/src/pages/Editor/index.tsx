@@ -187,6 +187,7 @@ export default function Editor() {
   const templateData = useAppSelector('template');
 
   const { id, userId } = useQuery();
+
   const loading = useLoading(template.loadings.fetchById);
   const { mergeTags, setMergeTags } = useMergeTagsModal(testMergeTags);
 
@@ -328,6 +329,31 @@ export default function Editor() {
     );
   };
 
+  const onSaveEmail = (values: IEmailTemplate) => {
+    const mjmlString = JsonToMjml({
+      data: values.content,
+      mode: 'testing',
+      context: values.content,
+      dataSource: mergeTags,
+      idx: null,
+    });
+
+    const html = mjml(mjmlString, {}).html;
+
+    services.common.saveEmailChanges({
+      subject: values.subject,
+      html,
+      json: JSON.stringify(values, null, 2),
+    });
+  };
+
+  const onSendEmail = (values: IEmailTemplate) => {
+    services.common.sendEmail({
+      id,
+    });
+    // navigator.clipboard.writeText(JSON.stringify(values, null, 2));
+  };
+
   const initialValues: IEmailTemplate | null = useMemo(() => {
     if (!templateData) return null;
     const sourceData = cloneDeep(templateData.content) as IBlockData;
@@ -391,7 +417,7 @@ export default function Editor() {
                   onBack={() => history.push('/')}
                   extra={
                     <Stack alignment='center'>
-                      <Dropdown
+                      {/* <Dropdown
                         droplist={
                           <Menu>
                             <Menu.Item
@@ -413,9 +439,21 @@ export default function Editor() {
                         <Button>
                           <strong>Import</strong>
                         </Button>
-                      </Dropdown>
+                      </Dropdown> */}
 
-                      <Dropdown
+                      {userId !== 'undefined' && (
+                        <Button onClick={() => onSaveEmail(values)}>
+                          <strong>Save</strong>
+                        </Button>
+                      )}
+
+                      {userId === 'undefined' && (
+                        <Button onClick={() => onSendEmail(values)}>
+                          <strong>Send Email</strong>
+                        </Button>
+                      )}
+
+                      {/* <Dropdown
                         droplist={
                           <Menu>
                             <Menu.Item
@@ -442,14 +480,7 @@ export default function Editor() {
                         <Button>
                           <strong>Export</strong>
                         </Button>
-                      </Dropdown>
-                      <Button
-                        type='primary'
-                        target='_blank'
-                        href='https://demo.easyemail.pro?utm_source=easyemail'
-                      >
-                        Try commercial version
-                      </Button>
+                      </Dropdown> */}
                     </Stack>
                   }
                 />
