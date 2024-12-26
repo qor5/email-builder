@@ -30,7 +30,7 @@ export default createSliceState({
         console.log(listdata);
         return {
           article_id: item.ID,
-          path: "St. Patrick's Day - Newsletter.json",
+          // path: "St. Patrick's Day - Newsletter.json",
           title: item.subject,
           created_at: item.CreatedAt,
           updated_at: item.UpdatedAt,
