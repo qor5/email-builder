@@ -3,32 +3,25 @@ import { USER } from '@demo/constants';
 
 export const article = {
   async getArticle(id: number | string, userId: number): Promise<IArticle> {
-    return request.get<IArticle>('/article/visitor/detail', {
+    return request.get<IArticle>('http://localhost:9800/email_template/list', {
       params: {
-        article_id: id,
-        user_id: userId,
+        ids: id,
+        // user_id: userId,
       },
     });
   },
-  async getArticleList({
-    size,
-    page,
-    userId,
-    categoryId,
-  }: {
-    page: number;
-    size: number;
-    categoryId: number;
-    userId: number;
-  }): Promise<ListResponse<IArticle>> {
-    return request.get<ListResponse<IArticle>>('/article/visitor/list', {
-      params: {
-        page,
-        size,
-        category_id: categoryId,
-        user_id: userId,
+  async getArticleList(): Promise<ListResponse<IArticle>> {
+    return request.get<ListResponse<IArticle>>(
+      'http://localhost:9800/email_template/list',
+      {
+        // params: {
+        //   page,
+        //   size,
+        //   category_id: categoryId,
+        //   user_id: userId,
+        // },
       },
-    });
+    );
   },
   async addArticle(data: {
     title: string;
@@ -50,7 +43,7 @@ export const article = {
       content?: string;
       picture?: string;
       summary?: string;
-    }
+    },
   ): Promise<IArticle> {
     return request.post<IArticle>('/article/user/update-article', {
       ...options,
@@ -68,6 +61,7 @@ export const article = {
 };
 
 export interface ListResponse<T> {
+  [x: string]: IArticle[];
   list: T[];
   count: number;
 }
@@ -78,10 +72,11 @@ interface content {
 }
 
 export interface IArticle {
+  [x: string]: string;
   article_id: number;
   user_id: number;
   category_id: number;
-  tags: { tag_id: number; }[]; // 由于懒得写接口，这个接口是拿之前的，其实不需要数组
+  tags: { tag_id: number }[]; // 由于懒得写接口，这个接口是拿之前的，其实不需要数组
   picture: string;
   title: string;
   summary: string;

@@ -23,6 +23,20 @@ export default createSliceState({
       //   provideUserData = data.list;
       // }
 
+      const data = await article.getArticleList();
+
+      provideUserData = data.data.map(item => {
+        const listdata = JSON.parse(item.json_body);
+        console.log(listdata);
+        return {
+          article_id: item.ID,
+          // path: "St. Patrick's Day - Newsletter.json",
+          title: item.subject,
+          created_at: item.CreatedAt,
+          updated_at: item.UpdatedAt,
+        };
+      });
+
       // user data
       const list = [...provideUserData];
       list.sort((a, b) => (a.updated_at > b.updated_at ? -1 : 1));

@@ -1,3 +1,4 @@
+import user from '@demo/store/user';
 import { request } from './axios.config';
 import axios from 'axios';
 
@@ -34,12 +35,19 @@ export const common = {
       },
     ]);
   },
-  sendTestEmail(data: { toEmail: string; subject: string; html: string; text: string }) {
-    return request.post('/email/user/send', {
-      to_email: data.toEmail,
+
+  saveEmailChanges(data: { subject: string; html: string; json: string }) {
+    return request.post('http://localhost:9800/email_template/create', {
       subject: data.subject,
-      text: data.text,
-      html: data.html,
+      json_body: data.json,
+      html_body: data.html,
+    });
+  },
+
+  sendEmail(data: { id: string }) {
+    return request.post('http://localhost:9800/email_template/send', {
+      template_id: +data.id,
+      user_ids: [1],
     });
   },
 };
