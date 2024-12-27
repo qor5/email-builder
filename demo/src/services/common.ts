@@ -47,7 +47,7 @@ export const common = {
   sendEmail(data: { id: string }) {
     return request.post('http://localhost:9800/email_template/send', {
       template_id: +data.id,
-      user_id: [1],
+      user_ids: [1],
     });
   },
 };

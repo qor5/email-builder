@@ -339,10 +339,11 @@ export default function Editor() {
     });
 
     const html = mjml(mjmlString, {}).html;
+    const htmlWithGoLangVar = html.replace(/\{\{\s*([^}]+?)\s*\}\}/g, '{{.$1}}');
 
     services.common.saveEmailChanges({
       subject: values.subject,
-      html,
+      html: htmlWithGoLangVar,
       json: JSON.stringify(values, null, 2),
     });
   };
