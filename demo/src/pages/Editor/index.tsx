@@ -396,7 +396,7 @@ export default function Editor() {
         <style>{blueTheme}</style>
         <EmailEditorProvider
           key={id}
-          height={featureEnabled ? 'calc(100vh)' : 'calc(100vh - 68px)'}
+          height={featureEnabled ? 'calc(100vh - 2px)' : 'calc(100vh - 68px)'}
           // height={featureEnabled ? 'calc(100vh - 108px)' : 'calc(100vh - 68px)'}
           data={initialValues}
           onUploadImage={onUploadImage}
