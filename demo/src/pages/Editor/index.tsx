@@ -396,7 +396,8 @@ export default function Editor() {
         <style>{blueTheme}</style>
         <EmailEditorProvider
           key={id}
-          height={featureEnabled ? 'calc(100vh - 108px)' : 'calc(100vh - 68px)'}
+          height={featureEnabled ? 'calc(100vh - 2px)' : 'calc(100vh - 68px)'}
+          // height={featureEnabled ? 'calc(100vh - 108px)' : 'calc(100vh - 68px)'}
           data={initialValues}
           onUploadImage={onUploadImage}
           fontList={fontList}
@@ -411,14 +412,14 @@ export default function Editor() {
           {({ values }, { submit, restart }) => {
             return (
               <>
-                <PageHeader
+                {/* <PageHeader
                   style={{ background: 'var(--color-bg-2)' }}
                   backIcon
                   title='Edit'
                   onBack={() => history.push('/')}
                   extra={
-                    <Stack alignment='center'>
-                      {/* <Dropdown
+                    <Stack alignment='center'> */}
+                {/* <Dropdown
                         droplist={
                           <Menu>
                             <Menu.Item
@@ -442,7 +443,7 @@ export default function Editor() {
                         </Button>
                       </Dropdown> */}
 
-                      {userId !== 'undefined' && (
+                {/* {userId !== 'undefined' && (
                         <Button onClick={() => onSaveEmail(values)}>
                           <strong>Save</strong>
                         </Button>
@@ -452,9 +453,9 @@ export default function Editor() {
                         <Button onClick={() => onSendEmail(values)}>
                           <strong>Send Email</strong>
                         </Button>
-                      )}
+                      )} */}
 
-                      {/* <Dropdown
+                {/* <Dropdown
                         droplist={
                           <Menu>
                             <Menu.Item
@@ -482,9 +483,9 @@ export default function Editor() {
                           <strong>Export</strong>
                         </Button>
                       </Dropdown> */}
-                    </Stack>
+                {/* </Stack>
                   }
-                />
+                /> */}
 
                 <StandardLayout categories={defaultCategories}>
                   <EmailEditor />
