@@ -1,5 +1,5 @@
 /* eslint-disable react/jsx-wrap-multilines */
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState, useRef } from 'react';
 import { useDispatch } from 'react-redux';
 import template from '@demo/store/template';
 import { useAppSelector } from '@demo/hooks/useAppSelector';
@@ -185,7 +185,7 @@ export default function Editor() {
   const dispatch = useDispatch();
   const history = useHistory();
   const templateData = useAppSelector('template');
-
+  const draftValuesRef = useRef(null);
   const { id, userId } = useQuery();
 
   const loading = useLoading(template.loadings.fetchById);
@@ -204,10 +204,54 @@ export default function Editor() {
       dispatch(template.actions.fetchDefaultTemplate(undefined));
     }
 
+    const handleMessage = async event => {
+      const tempAllowedOrigin = 'http://localhost:9800';
+      // console.log(draftValuesRef.current);
+
+      if (event.origin !== tempAllowedOrigin && event.origin !== window.location.origin)
+        return;
+
+      const { type, requestId } = event.data;
+      let response = {};
+
+      switch (type) {
+        case 'sendMail':
+          try {
+            const res = await onSendEmail(draftValuesRef.current);
+
+            response = {
+              error: (res as any).data[0].error_message,
+              requestId,
+            };
+          } catch (error) {
+            response = {
+              requestId,
+              error,
+            };
+          }
+
+          break;
+        case 'getData':
+          const editorData = onSaveEmail(draftValuesRef.current);
+          response = {
+            requestId,
+            Subject: editorData.subject,
+            JSONBody: editorData.json,
+            HTMLBody: editorData.html,
+          };
+          break;
+      }
+
+      window.parent.postMessage(response, event.origin);
+    };
+
+    window.addEventListener('message', handleMessage);
+
     return () => {
       dispatch(template.actions.set(null));
+      window.removeEventListener('message', handleMessage);
     };
-  }, [dispatch, id, userId]);
+  }, [dispatch, id, userId, draftValuesRef]);
 
   const onUploadImage = async (blob: Blob) => {
     return services.common.uploadByQiniu(blob);
@@ -293,41 +337,41 @@ export default function Editor() {
     });
   };
 
-  const onExportMJML = (values: IEmailTemplate) => {
-    const mjmlString = JsonToMjml({
-      data: values.content,
-      mode: 'production',
-      context: values.content,
-      dataSource: mergeTags,
-    });
+  // const onExportMJML = (values: IEmailTemplate) => {
+  //   const mjmlString = JsonToMjml({
+  //     data: values.content,
+  //     mode: 'production',
+  //     context: values.content,
+  //     dataSource: mergeTags,
+  //   });
 
-    pushEvent({ event: 'MJMLExport', payload: { values, mergeTags } });
-    navigator.clipboard.writeText(mjmlString);
-    saveAs(new Blob([mjmlString], { type: 'text/mjml' }), 'easy-email.mjml');
-  };
+  //   pushEvent({ event: 'MJMLExport', payload: { values, mergeTags } });
+  //   navigator.clipboard.writeText(mjmlString);
+  //   saveAs(new Blob([mjmlString], { type: 'text/mjml' }), 'easy-email.mjml');
+  // };
 
-  const onExportHTML = (values: IEmailTemplate) => {
-    const mjmlString = JsonToMjml({
-      data: values.content,
-      mode: 'production',
-      context: values.content,
-      dataSource: mergeTags,
-    });
+  // const onExportHTML = (values: IEmailTemplate) => {
+  //   const mjmlString = JsonToMjml({
+  //     data: values.content,
+  //     mode: 'production',
+  //     context: values.content,
+  //     dataSource: mergeTags,
+  //   });
 
-    const html = mjml(mjmlString, {}).html;
+  //   const html = mjml(mjmlString, {}).html;
 
-    pushEvent({ event: 'HTMLExport', payload: { values, mergeTags } });
-    navigator.clipboard.writeText(html);
-    saveAs(new Blob([html], { type: 'text/html' }), 'easy-email.html');
-  };
+  //   pushEvent({ event: 'HTMLExport', payload: { values, mergeTags } });
+  //   navigator.clipboard.writeText(html);
+  //   saveAs(new Blob([html], { type: 'text/html' }), 'easy-email.html');
+  // };
 
-  const onExportJSON = (values: IEmailTemplate) => {
-    navigator.clipboard.writeText(JSON.stringify(values, null, 2));
-    saveAs(
-      new Blob([JSON.stringify(values, null, 2)], { type: 'application/json' }),
-      'easy-email.json',
-    );
-  };
+  // const onExportJSON = (values: IEmailTemplate) => {
+  //   navigator.clipboard.writeText(JSON.stringify(values, null, 2));
+  //   saveAs(
+  //     new Blob([JSON.stringify(values, null, 2)], { type: 'application/json' }),
+  //     'easy-email.json',
+  //   );
+  // };
 
   const onSaveEmail = (values: IEmailTemplate) => {
     const mjmlString = JsonToMjml({
@@ -341,15 +385,20 @@ export default function Editor() {
     const html = mjml(mjmlString, {}).html;
     const htmlWithGoLangVar = html.replace(/\{\{\s*([^}]+?)\s*\}\}/g, '{{.$1}}');
 
-    services.common.saveEmailChanges({
+    // services.common.saveEmailChanges({
+    //   subject: values.subject,
+    //   html: htmlWithGoLangVar,
+    //   json: JSON.stringify(values, null, 2),
+    // });
+    return {
       subject: values.subject,
       html: htmlWithGoLangVar,
       json: JSON.stringify(values, null, 2),
-    });
+    };
   };
 
-  const onSendEmail = (values: IEmailTemplate) => {
-    services.common.sendEmail({
+  const onSendEmail = async (values: IEmailTemplate) => {
+    return await services.common.sendEmail({
       id,
     });
     // navigator.clipboard.writeText(JSON.stringify(values, null, 2));
@@ -400,6 +449,9 @@ export default function Editor() {
           // height={featureEnabled ? 'calc(100vh - 108px)' : 'calc(100vh - 68px)'}
           data={initialValues}
           onUploadImage={onUploadImage}
+          onChange={values => {
+            draftValuesRef.current = values;
+          }}
           fontList={fontList}
           onSubmit={onSubmit}
           onChangeMergeTag={onChangeMergeTag}
@@ -443,17 +495,13 @@ export default function Editor() {
                         </Button>
                       </Dropdown> */}
 
-                {/* {userId !== 'undefined' && (
-                        <Button onClick={() => onSaveEmail(values)}>
-                          <strong>Save</strong>
-                        </Button>
-                      )}
+                {/* <Button onClick={() => onSaveEmail(values)}>
+                  <strong>Save</strong>
+                </Button>
 
-                      {userId === 'undefined' && (
-                        <Button onClick={() => onSendEmail(values)}>
-                          <strong>Send Email</strong>
-                        </Button>
-                      )} */}
+                <Button onClick={() => onSendEmail(values)}>
+                  <strong>Send Email</strong>
+                </Button> */}
 
                 {/* <Dropdown
                         droplist={
