@@ -22,6 +22,7 @@ export interface EmailEditorProviderProps<T extends IEmailTemplate = any>
     helper: FormApi<IEmailTemplate, Partial<IEmailTemplate>>,
   ) => React.ReactNode;
   onSubmit?: Config<IEmailTemplate, Partial<IEmailTemplate>>['onSubmit'];
+  onChange?: (values: T) => void;
   validationSchema?: Config<IEmailTemplate, Partial<IEmailTemplate>>['validate'];
 }
 
@@ -66,7 +67,10 @@ export const EmailEditorProvider = <T extends any>(
                     <HoverIdxProvider>
                       <ScrollProvider>
                         <FocusBlockLayoutProvider>
-                          <FormWrapper children={children} />
+                          <FormWrapper
+                            children={children}
+                            onChange={props.onChange}
+                          />
                         </FocusBlockLayoutProvider>
                       </ScrollProvider>
                     </HoverIdxProvider>
@@ -82,9 +86,20 @@ export const EmailEditorProvider = <T extends any>(
   );
 };
 
-function FormWrapper({ children }: { children: EmailEditorProviderProps['children'] }) {
+function FormWrapper({
+  children,
+  onChange,
+}: {
+  children: EmailEditorProviderProps['children'];
+  onChange?: (values: IEmailTemplate) => void;
+}) {
   const data = useFormState<IEmailTemplate>();
   const helper = useForm<IEmailTemplate>();
+
+  useEffect(() => {
+    onChange?.(data.values);
+  }, [data.values, onChange]);
+
   return <>{children(data, helper)}</>;
 }
 
